@@ -125,7 +125,7 @@
         }
 
         /* Efeito de digitação */
-        .typing-effect {
+        /* .typing-effect {
             overflow: hidden;
             border-right: 3px solid #FF7A00;
             white-space: nowrap;
@@ -152,7 +152,7 @@
             50% {
                 border-color: #FF7A00
             }
-        }
+        } */
 
         /* Efeito de partículas no background */
         #particles-js {
@@ -847,23 +847,23 @@
             }
         });
 
-        // 8. Efeito de digitação no hero (opcional)
-        const heroText = document.querySelector('#hero h1');
-        if (heroText) {
-            // Salvar texto original
-            const originalText = heroText.innerHTML;
+        // 8. Efeito de digitação no hero 
+        // const heroText = document.querySelector('#hero h1');
+        // if (heroText) {
+        //     // Salvar texto original
+        //     const originalText = heroText.innerHTML;
 
-            // Aplicar efeito de digitação
-            setTimeout(() => {
-                heroText.classList.add('typing-effect');
+        //     // Aplicar efeito de digitação
+        //     setTimeout(() => {
+        //         heroText.classList.add('typing-effect');
 
-                // Remover efeito após conclusão
-                setTimeout(() => {
-                    heroText.classList.remove('typing-effect');
-                    heroText.style.borderRight = 'none';
-                }, 4000);
-            }, 1000);
-        }
+        //         // Remover efeito após conclusão
+        //         setTimeout(() => {
+        //             heroText.classList.remove('typing-effect');
+        //             heroText.style.borderRight = 'none';
+        //         }, 4000);
+        //     }, 1000);
+        // }
     </script>
 </body>
 
