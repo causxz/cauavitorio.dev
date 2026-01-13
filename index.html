@@ -587,37 +587,36 @@
                         </div>
                     </div>
 
-                    <!-- Formulário de contato -->
                     <div class="animate-slide-up" style="animation-delay: 0.2s">
                         <h3 class="text-2xl font-bold text-white mb-6">Envie uma mensagem</h3>
-
-                        <form id="contact-form" class="space-y-6">
+                    
+                        <form id="contact-form" action="https://formspree.io/f/xreegreo" method="POST" class="space-y-6">
                             <div>
                                 <label for="name" class="block text-gray-300 mb-2">Seu nome</label>
                                 <input type="text" id="name" name="name"
                                     class="w-full px-4 py-3 bg-cardbg border border-gray-600 rounded-lg focus:ring-2 focus:ring-ocean focus:border-transparent text-white transition-all duration-300"
                                     placeholder="Digite seu nome" required>
                             </div>
-
+                        
                             <div>
                                 <label for="email" class="block text-gray-300 mb-2">Seu email</label>
                                 <input type="email" id="email" name="email"
                                     class="w-full px-4 py-3 bg-cardbg border border-gray-600 rounded-lg focus:ring-2 focus:ring-ocean focus:border-transparent text-white transition-all duration-300"
                                     placeholder="Digite seu email" required>
                             </div>
-
+                        
                             <div>
                                 <label for="message" class="block text-gray-300 mb-2">Sua mensagem</label>
                                 <textarea id="message" name="message" rows="5"
                                     class="w-full px-4 py-3 bg-cardbg border border-gray-600 rounded-lg focus:ring-2 focus:ring-ocean focus:border-transparent text-white transition-all duration-300"
                                     placeholder="Descreva seu projeto ou dúvida..." required></textarea>
                             </div>
-
-                            <button type="submit"
+                        
+                            <button type="submit" id="submit-btn"
                                 class="w-full bg-orange hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:-translate-y-1">
-                                <i class="fas fa-paper-plane mr-2"></i> Enviar mensagem
+                                <i class="fas fa-paper-plane mr-2"></i> <span id="btn-text">Enviar mensagem</span>
                             </button>
-
+                        
                             <div id="form-message" class="hidden p-4 rounded-lg text-center font-medium"></div>
                         </form>
                     </div>
@@ -748,35 +747,67 @@
         const formMessage = document.getElementById('form-message');
 
         if (contactForm) {
-            contactForm.addEventListener('submit', (e) => {
+            contactForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                // Simular envio do formulário
+                // Referência ao botão e texto original
                 const submitButton = contactForm.querySelector('button[type="submit"]');
                 const originalText = submitButton.innerHTML;
 
+                // 1. Feedback visual (Carregando...)
                 submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enviando...';
                 submitButton.disabled = true;
+                formMessage.classList.add('hidden'); // Esconde msg anterior
 
-                // Simular tempo de envio
-                setTimeout(() => {
-                    // Sucesso no envio
-                    formMessage.textContent = 'Mensagem enviada com sucesso! Entrarei em contato em breve.';
-                    formMessage.className = 'bg-green-900/30 text-green-300 p-4 rounded-lg text-center font-medium';
+                // Coleta os dados do formulário
+                const data = new FormData(contactForm);
+
+                try {
+                    // Envia para o URL definido no action do HTML
+                    const response = await fetch(contactForm.action, {
+                        method: 'POST',
+                        body: data,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        // === SUCESSO ===
+                        formMessage.textContent = 'Mensagem enviada com sucesso! Entrarei em contato em breve.';
+                        formMessage.className = 'bg-green-900/30 text-green-300 p-4 rounded-lg text-center font-medium border border-green-500/30';
+                        formMessage.classList.remove('hidden');
+
+                        // Limpa o formulário
+                        contactForm.reset();
+                    } else {
+                        // === ERRO DO SERVIDOR ===
+                        const data = await response.json();
+                        if (Object.hasOwnProperty.call(data, 'errors')) {
+                            formMessage.textContent = data["errors"].map(error => error["message"]).join(", ");
+                        } else {
+                            formMessage.textContent = "Ops! Houve um problema ao enviar seu formulário.";
+                        }
+                        formMessage.className = 'bg-red-900/30 text-red-300 p-4 rounded-lg text-center font-medium border border-red-500/30';
+                        formMessage.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    // === ERRO DE CONEXÃO ===
+                    formMessage.textContent = "Erro de conexão. Verifique sua internet e tente novamente.";
+                    formMessage.className = 'bg-red-900/30 text-red-300 p-4 rounded-lg text-center font-medium border border-red-500/30';
                     formMessage.classList.remove('hidden');
-
-                    // Resetar formulário
-                    contactForm.reset();
-
+                } finally {
                     // Restaurar botão
                     submitButton.innerHTML = originalText;
                     submitButton.disabled = false;
 
-                    // Esconder mensagem após 5 segundos
-                    setTimeout(() => {
-                        formMessage.classList.add('hidden');
-                    }, 5000);
-                }, 1500);
+                    // Esconder mensagem de sucesso após 5 segundos (deixa a de erro visível)
+                    if (formMessage.classList.contains('text-green-300')) {
+                        setTimeout(() => {
+                            formMessage.classList.add('hidden');
+                        }, 5000);
+                    }
+                }
             });
         }
 
