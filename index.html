@@ -211,19 +211,20 @@
             </div>
 
             <!-- Menu mobile (oculto por padrão) -->
-            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4">
-                <div class="flex flex-col space-y-4">
+            <div id="mobile-menu" 
+                 class="hidden md:hidden absolute top-full left-0 w-full bg-navy/95 backdrop-blur-md border-t border-white/10 shadow-2xl transition-all duration-300 z-50 p-6">
+
+                <div class="flex flex-col space-y-6 text-center">
                     <a href="#servicos"
-                        class="font-medium text-gray-300 hover:text-orange transition-colors duration-300">Serviços</a>
+                        class="text-lg font-medium text-gray-300 hover:text-orange transition-colors duration-300 py-2 border-b border-white/5 hover:bg-white/5 rounded-lg">Serviços</a>
                     <a href="#projetos"
-                        class="font-medium text-gray-300 hover:text-orange transition-colors duration-300">Projetos</a>
+                        class="text-lg font-medium text-gray-300 hover:text-orange transition-colors duration-300 py-2 border-b border-white/5 hover:bg-white/5 rounded-lg">Projetos</a>
                     <a href="#sobre"
-                        class="font-medium text-gray-300 hover:text-orange transition-colors duration-300">Sobre Mim</a>
+                        class="text-lg font-medium text-gray-300 hover:text-orange transition-colors duration-300 py-2 border-b border-white/5 hover:bg-white/5 rounded-lg">Sobre Mim</a>
                     <a href="#contato"
-                        class="font-medium text-gray-300 hover:text-orange transition-colors duration-300">Contato</a>
+                        class="text-lg font-medium text-gray-300 hover:text-orange transition-colors duration-300 py-2 hover:bg-white/5 rounded-lg">Contato</a>
                 </div>
             </div>
-        </div>
     </header>
 
     <!-- Seção Hero -->
@@ -841,6 +842,15 @@
                 }
             });
         });
+
+        // Código para fechar o menu ao clicar
+        if (!mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+            // Reseta o ícone do botão
+            const icon = mobileMenuButton.querySelector('i');
+            icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+        }
 
         // 7. Adicionar classe de scroll para header
         window.addEventListener('scroll', () => {
